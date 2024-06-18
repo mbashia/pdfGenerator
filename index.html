@@ -1,0 +1,40 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Download as PDF</title>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
+  </head>
+  <body>
+    <div
+      id="content"
+      style="width: 100%; height: 100%; padding: 20px; border: 1px solid #ccc"
+    >
+      <h1>This is the content to be converted to PDF</h1>
+      <p>Here is some more content...</p>
+      <!-- Add more content as needed -->
+    </div>
+    <button id="download">Download as PDF</button>
+
+    <script>
+      document.getElementById("download").addEventListener("click", () => {
+        const { jsPDF } = window.jspdf;
+        const content = document.getElementById("content");
+
+        html2canvas(content, { scale: 2 }).then((canvas) => {
+          const imgData = canvas.toDataURL("image/png");
+          const pdf = new jsPDF("p", "pt", "a4");
+
+          const imgProps = pdf.getImageProperties(imgData);
+          const pdfWidth = pdf.internal.pageSize.getWidth();
+          const pdfHeight = (imgProps.height * pdfWidth) / imgProps.width;
+
+          pdf.addImage(imgData, "PNG", 0, 0, pdfWidth, pdfHeight);
+          pdf.save("download.pdf");
+        });
+      });
+    </script>
+  </body>
+</html>
